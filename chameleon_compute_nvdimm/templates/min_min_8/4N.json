@@ -1,0 +1,28 @@
+{
+    "dag_file": "",
+
+    "scheduler_type": "min-min",
+
+    "mapper_type": "bare-metal",
+    "mapper_mem_policy_type": "default",
+    "mapper_mem_bind_numa_node_ids": [],
+
+    "core_avail_mask": "",
+    "core_avail_ids": [
+        0, 1,
+        28, 29,
+        56, 57,
+        84, 85
+    ],
+
+    "flops_per_cycle": 32,
+    "clock_frequency_type": "static",
+    "clock_frequency_hz": 1000000000,
+
+    "distance_matrices": {
+        "latency_ns": "./system/uniform_lat.txt",
+        "bandwidth_gbps": "./system/uniform_bw.txt"
+    },
+
+    "out_file_name": ""
+}

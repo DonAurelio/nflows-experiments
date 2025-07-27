@@ -1,0 +1,25 @@
+{
+    "dag_file": "./workflows/srasearch/dot/srasearch-chameleon-50a-003.dot",
+
+    "scheduler_type": "fifo",
+    "scheduler_params": [
+        "fifo_prioritize_by_core_id=yes",
+        "fifo_prioritize_by_exec_order=yes"
+    ],
+
+    "mapper_type": "bare-metal",
+    "mapper_mem_policy_type": "bind",
+    "mapper_mem_bind_numa_node_ids": [0],
+
+    "core_avail_mask": "0xFFFF",
+    "flops_per_cycle": 32,
+    "clock_frequency_type": "static",
+    "clock_frequency_hz": 1000000000,
+
+    "distance_matrices": {
+        "latency_ns": "./example/non_uniform_lat.txt",
+        "bandwidth_gbps": "./example/non_uniform_bw.txt"
+    },
+
+    "out_file_name": "./workflows/srasearch/yaml/srasearch-chameleon-50a-003.yaml"
+}
