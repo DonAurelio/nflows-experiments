@@ -1,3 +1,7 @@
+<img src="https://raw.githubusercontent.com/DonAurelio/nflows/refs/heads/main/logo.png"
+     align="right"
+     width="15%"
+     alt="nFlows logo\">
 
 # nFlows: Experiments
 
@@ -103,13 +107,13 @@ Every experiment folder contains three subfolders: system, templates, and workfl
 Contains three configuration files:
 
 1. Bandwidth distance matrix (values in GB/s). Examples: `non_uniform_bw.txt`, `uniform_bw.txt`.
-2. Latency distance matrix (values in nanoseconds). Examples: [non_uniform_lat.txt](./system/non_uniform_bw.txt), [uniform_lat.txt](./system/uniform_bw.txt).
-3. Relative distances among NUMA domains (dimensionless) [Optional]. Example: [non_uniform_lat_rel.txt](./non_uniform_lat_rel.txt).
+2. Latency distance matrix (values in nanoseconds). Examples: `non_uniform_lat.txt`, `uniform_lat.txt`.
+3. Relative distances among NUMA domains (dimensionless) [Optional]. Example: `non_uniform_lat_rel.txt`.
 
 Values in these configuration files are made available to scheduling algorithms through the runtime API.
 This enables the scheduler to make NUMA-aware scheduling decisions. In parallel, the runtime system retrieves memory and core locality information via the `hwloc` library. This information is also made accessible to scheduling algorithms at runtime.
 
-### The `templates` folder
+### Templates
 
 Contains experimental configuration files grouped into folders. These groups determine how the results will be organized. Each workflow is evaluated against all experimental configurations defined in the templates folder. A new configuration is automatically created by varying the `dag_file` and `out_file_name` fields in the configuration file when the workflow is executed.
 
@@ -147,37 +151,6 @@ templates
     └── 1_SR_1.json
 ```
 
-### The `workflows` folder 
+### Workflows 
 
-Contains the workflows used for evaluation. The workflows were downloaded from the [WfInstances browser](https://wfinstances.ics.hawaii.edu/). Since the workflow traces were provided in JSON format, the [generate_dot.py](../scripts/generate_dot.py) script was used to generate the DOT input files required by the runtime system. To handle parallel dependencies between tasks sharing multiple files, the script consolidates data items with identical filenames between parent outputs and child inputs.
-
-We considered three variations of each workflow. All variations use a constant computation payload of 10 MFlops but differ in communication payload: constant (40 MB), small (40–50 MB), and large (40–100 MB). The communication payload ranges scale the original values in the workflow traces to match the specified range while preserving the original statistical distribution. Input and output files defined in the workflows are not considered during scaling or execution.
-
-```sh
-generate_dot.py ../workflows/montage/raw/montage-chameleon-2mass-01d-001.json ./workflows/C_montage-chameleon-2mass-01d-001.dot --dep_constant 4e7 1e8 --flops_constant 10000000
-generate_dot.py ../workflows/montage/raw/montage-chameleon-2mass-01d-001.json ./workflows/S_montage-chameleon-2mass-01d-001.dot --dep_scale_range 4e7 5e7 --flops_constant 10000000
-generate_dot.py ../workflows/montage/raw/montage-chameleon-2mass-01d-001.json ./workflows/L_montage-chameleon-2mass-01d-001.dot --dep_scale_range 4e7 1e8 --flops_constant 10000000
-```
-
-Available workflows for evaluation.
-
-```
-C_montage-chameleon-2mass-01d-001.dot  
-C_montage-chameleon-2mass-015d-001.dot  
-C_montage-chameleon-2mass-025d-001.dot  
-C_montage-chameleon-dss-05d-001.dot  
-C_montage-chameleon-dss-10d-001.dot  
-C_montage-chameleon-dss-075d-001.dot  
-L_montage-chameleon-2mass-01d-001.dot  
-L_montage-chameleon-2mass-015d-001.dot  
-L_montage-chameleon-2mass-025d-001.dot  
-L_montage-chameleon-dss-05d-001.dot  
-L_montage-chameleon-dss-10d-001.dot  
-L_montage-chameleon-dss-075d-001.dot  
-S_montage-chameleon-2mass-01d-001.dot  
-S_montage-chameleon-2mass-015d-001.dot  
-S_montage-chameleon-2mass-025d-001.dot  
-S_montage-chameleon-dss-05d-001.dot  
-S_montage-chameleon-dss-10d-001.dot  
-S_montage-chameleon-dss-075d-001.dot
-```
+Contains the workflows used for evaluation. The workflows were downloaded from the [WfInstances browser](https://wfinstances.ics.hawaii.edu/). Since the workflow traces were provided in JSON format, the [nflows_generate_dot](https://github.com/DonAurelio/nflows-tools) script was used to generate the DOT input files required by the runtime system. To handle parallel dependencies between tasks sharing multiple files, the script consolidates data items with identical filenames between parent outputs and child inputs.
