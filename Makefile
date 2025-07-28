@@ -9,7 +9,7 @@
 # 	--log=hardware.thres:debug
 NFLOWS_EXE := nflows $(RUNTIME_LOG_FLAGS)
 SLURM_EXE := /bin/sbatch --cpus-per-task=$(shell nproc)
-SLURM_JOB_TIMEOUT := 01:00:00
+SLURM_JOB_TIMEOUT := 00:30:00
 
 # Validation Script
 VALIDATE_OFFSETS_EXE := nflows_validate_offsets
@@ -29,7 +29,7 @@ EVALUATION_CONFIG_DIR := $(EVALUATION_RESULT_DIR)/config
 EVALUATION_SLURM_DIR := $(EVALUATION_RESULT_DIR)/slurm
 
 EVALUATION_SLEEPTIME := 10
-EVALUATION_REPEATS := 1
+EVALUATION_REPEATS := 5
 EVALUATION_GROUPS := $(notdir $(shell find $(EVALUATION_TEMPLATE_DIR) -mindepth 1 -maxdepth 1 -type d))
 EVALUATION_WORKFLOWS := $(notdir $(shell find $(EVALUATION_WORKFLOW_DIR) -mindepth 1 -maxdepth 1 -type f -name "*.dot" 2>/dev/null))
 EVALUATION_CONFIG_DIRS :=  $(notdir $(shell find $(EVALUATION_CONFIG_DIR) -mindepth 1 -maxdepth 1 -type d 2>/dev/null))
@@ -161,7 +161,7 @@ $(EVALUATION_SLURM_DIR)/%.submitted: $(EVALUATION_SLURM_DIR)/%.slurm
 	@SLURM_DIR=$(EVALUATION_SLURM_DIR)/$*; \
 	WORKFLOW_LOG_FILE=$(EVALUATION_LOG_DIR)/$*/workflow.log; \
 	find $$SLURM_DIR -name submit.sbatch | while read -r SLURM_FILE; do \
-		$(SLURM_EXEC) "$$SLURM_FILE" >> "$$WORKFLOW_LOG_FILE" 2>&1; \
+		$(SLURM_EXE) "$$SLURM_FILE" >> "$$WORKFLOW_LOG_FILE" 2>&1; \
 		SLURM_STATUS=$$?; \
 		if [ $$SLURM_STATUS -eq 0 ]; then \
 			printf "  [SUCCESS] $$SLURM_FILE\n"; \
