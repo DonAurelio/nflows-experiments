@@ -11,6 +11,9 @@ NFLOWS_EXE := nflows $(RUNTIME_LOG_FLAGS)
 SLURM_EXE := /bin/sbatch --cpus-per-task=$(shell nproc)
 SLURM_JOB_TIMEOUT := 01:00:00
 
+# Validation Script
+VALIDATE_OFFSETS_EXE := nflows_validate_offsets
+
 # Configuration Generation Scripts
 GENERATE_CONFIG := nflows_generate_config
 GENERATE_SLURM := nflows_generate_slurm
@@ -26,7 +29,7 @@ EVALUATION_CONFIG_DIR := $(EVALUATION_RESULT_DIR)/config
 EVALUATION_SLURM_DIR := $(EVALUATION_RESULT_DIR)/slurm
 
 EVALUATION_SLEEPTIME := 10
-EVALUATION_REPEATS := 5
+EVALUATION_REPEATS := 1
 EVALUATION_GROUPS := $(notdir $(shell find $(EVALUATION_TEMPLATE_DIR) -mindepth 1 -maxdepth 1 -type d))
 EVALUATION_WORKFLOWS := $(notdir $(shell find $(EVALUATION_WORKFLOW_DIR) -mindepth 1 -maxdepth 1 -type f -name "*.dot" 2>/dev/null))
 EVALUATION_CONFIG_DIRS :=  $(notdir $(shell find $(EVALUATION_CONFIG_DIR) -mindepth 1 -maxdepth 1 -type d 2>/dev/null))
@@ -102,13 +105,13 @@ $(EVALUATION_CONFIG_DIR)/%/.generated: $(EVALUATION_WORKFLOW_DIR)/%.dot
 			DST_FILE=$$(echo "$$CONFIG_FILE" | sed 's|/config/|/output/|' | sed 's|config.json|'"$$repeat"'.yaml|'); \
 			mkdir -p "$$(dirname $$LOG_FILE)"; \
 			START_TIME=$$(date +%s.%N); \
-			$(EXECUTABLE) "$${CONFIG_FILE}" >  "$$LOG_FILE" 2>&1; \
+			$(NFLOWS_EXE) "$${CONFIG_FILE}" >  "$$LOG_FILE" 2>&1; \
 			EXECUTABLE_STATUS=$$?; \
 			END_TIME=$$(date +%s.%N); \
 			ELAPSED_TIME_SEC=$$(echo "$$END_TIME - $$START_TIME" | bc); \
 			mv $$SRC_FILE $$DST_FILE; \
 			printf "Execution time: %.3f s\n" "$$ELAPSED_TIME_SEC" >> "$$LOG_FILE"; \
-			$(VALIDATE_OFFSETS) "$${DST_FILE}"  >> "$$LOG_FILE" 2>&1; \
+			$(VALIDATE_OFFSETS_EXE) "$${DST_FILE}"  >> "$$LOG_FILE" 2>&1; \
 			VALIDATE_STATUS=$$?; \
 			if [ $$EXECUTABLE_STATUS -eq 0 ] && [ $$VALIDATE_STATUS -eq 0 ]; then \
 				printf "  [SUCCESS] $$CONFIG_FILE (Time: %.3f s)\n" "$$ELAPSED_TIME_SEC"; \
@@ -132,8 +135,8 @@ $(EVALUATION_SLURM_DIR)/%.slurm: $(EVALUATION_CONFIG_DIR)/%/.generated
 		mkdir -p "$$LOG_DIR"; \
 		$(GENERATE_SLURM) --job "$*" \
 			--config_file "$$CONFIG_FILE" \
-			--execute_command "$(EXECUTABLE) $${CONFIG_FILE}" \
-			--validate_command "$(VALIDATE_OFFSETS)" \
+			--execute_command "$(NFLOWS_EXE) $${CONFIG_FILE}" \
+			--validate_command "$(VALIDATE_OFFSETS_EXE)" \
 			--repeats $(EVALUATION_REPEATS) \
 			--time_limit "$(SLURM_JOB_TIMEOUT)" \
 			--log_dir "$$LOG_DIR" \
