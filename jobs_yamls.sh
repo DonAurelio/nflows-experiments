@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Usage: ./list_output_yaml.sh /path/to/root
+# Usage: ./jobs_output_summary.sh /path/to/output
 
 ROOT="${1:-.}"  # Use current directory if not specified
 

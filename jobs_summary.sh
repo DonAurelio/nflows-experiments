@@ -2,7 +2,7 @@
 
 # Check that a directory was provided
 if [ -z "$1" ]; then
-  echo "Usage: $0 /path/to/search"
+  echo "Usage: $0 /path/to/log"
   exit 1
 fi
 
@@ -10,15 +10,18 @@ fi
 BASE_DIR="$1"
 
 # Print CSV header
-echo "experiment;algorithm;level;time"
+echo "experiment;algorithm;level;time;yaml_size_kb"
 
-#!/bin/bash
-
-# Print CSV header
-echo "experiment,algorithm,level,time,yaml_size_kb"
-
-# Find all .out files and process them
+# Find first .out file in each level directory
 find "$BASE_DIR" -type f -name "*.out" | while read -r file; do
+  level_dir=$(dirname "$file")
+  # Check if this is the first .out in the level directory
+  first_out=$(find "$level_dir" -maxdepth 1 -type f -name "*.out" | sort | head -n 1)
+  if [[ "$file" != "$first_out" ]]; then
+    continue
+  fi
+
+  # Process the first .out file
   grep "\[SUCCESS\]" "$file" | while read -r line; do
     if [[ "$line" =~ \[SUCCESS\]\ \.\/results/config/([^/]+)/([^/]+)/([^/]+)/config\.json\ \(Time:\ ([0-9.]+)\ s\) ]]; then
       experiment="${BASH_REMATCH[1]}"
@@ -26,7 +29,7 @@ find "$BASE_DIR" -type f -name "*.out" | while read -r file; do
       level="${BASH_REMATCH[3]}"
       time="${BASH_REMATCH[4]}"
       
-      # Look for the first .yaml file in the specified output path
+      # Look for the first .yaml file in the corresponding output path
       yaml_dir="$BASE_DIR/../output/$experiment/$algorithm/$level/"
       yaml_file=$(find "$yaml_dir" -maxdepth 1 -type f -name "*.yaml" | sort | head -n 1)
       

@@ -1,0 +1,1 @@
+./results/slurm/S_epigenomics-chameleon-ilmn-6seq-50k-001/min_min_24/1L/submit.sbatch

@@ -1,6 +1,0 @@
-montage/raw/montage-chameleon-2mass-01d-001
-montage-chameleon-2mass-015d-001
-montage-chameleon-2mass-025d-001
-montage-chameleon-dss-05d-001
-montage-chameleon-dss-10d-001
-montage-chameleon-dss-075d-001

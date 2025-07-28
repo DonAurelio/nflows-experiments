@@ -23,7 +23,7 @@ Provides the complete setup and automation scripts for running reproducible expe
 2. Generate the workflows to be used in the experiment.
 
      ```sh
-     ./generate_workflows.sh ./workflows ./chameleon_cascade_lake_r/workflows
+     ./workflows_generate.sh ./workflows ./chameleon_cascade_lake_r/workflows
      ```
      
      The command searches for `workflow_list.txt` in `./chameleon_cascade_lake_r/workflows` and generates the DOT files required by [nFlows](https://github.com/DonAurelio/nflows) for the specified workflows in the experiment.
