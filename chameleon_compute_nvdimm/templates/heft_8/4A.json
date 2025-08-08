@@ -2,6 +2,7 @@
     "dag_file": "",
 
     "scheduler_type": "heft",
+    "scheduler_params": [],
 
     "mapper_type": "bare-metal",
     "mapper_mem_policy_type": "default",
